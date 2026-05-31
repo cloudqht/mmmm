@@ -91,6 +91,7 @@ class XueqiuMonitor:
         # 状态记录
         self.last_stocks: Set[str] = set()      # 股票代码集合
         self.last_post_ids: Set[int] = set()    # 帖子 ID 集合
+        self._stock_name_cache = {}
 
     def _get_json(self, url: str, params: dict = None) -> dict:
         """统一 GET，带重试"""
@@ -181,12 +182,12 @@ class XueqiuMonitor:
         self.last_stocks = current_symbols
         return added_stocks, removed_stocks
 
-    @property
-    def _stock_name_cache(self) -> Dict[str, str]:
-        """简单缓存：从最近一次拉取的 stocks 中建立 code->name 映射"""
-        if not hasattr(self, '_stock_name_map'):
-            self._stock_name_map = {}
-        return self._stock_name_map
+    # @property
+    # def _stock_name_cache(self) -> Dict[str, str]:
+    #     """简单缓存：从最近一次拉取的 stocks 中建立 code->name 映射"""
+    #     if not hasattr(self, '_stock_name_map'):
+    #         self._stock_name_map = {}
+    #     return self._stock_name_map
 
     # ---------- 帖子 ----------
     def fetch_recent_posts(self, count: int = 20) -> List[Dict]:
