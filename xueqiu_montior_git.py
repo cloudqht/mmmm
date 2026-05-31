@@ -299,13 +299,13 @@ class XueqiuMonitor:
         self.push_changes(added, removed, new_posts, deleted_ids)
         self.save_state()
 
-    def run_forever(self, interval: int = 60):
-        """持续监控"""
-        logger.info(f"开始监控用户 {self.uid}，间隔 {interval} 秒")
-        self.run_once(silent_first=True)
-        while True:
-            time.sleep(interval)
-            self.run_once(silent_first=False)
+    # def run_forever(self, interval: int = 60):
+    #     """持续监控"""
+    #     logger.info(f"开始监控用户 {self.uid}，间隔 {interval} 秒")
+    #     self.run_once(silent_first=True)
+    #     while True:
+    #         time.sleep(interval)
+    #         self.run_once(silent_first=False)
 
 
 if __name__ == "__main__":
@@ -314,7 +314,6 @@ if __name__ == "__main__":
     RAW_COOKIE = os.getenv("RAW_COOKIE")
     MONITOR_UID = os.getenv("MONITOR_UID")
     WECHAT_WEBHOOK = os.getenv("WECHAT_WEBHOOK")
-    SILENT_FIRST_RUN = os.getenv("SILENT_FIRST_RUN", "false").lower() == "true"
 
     if not all([RAW_COOKIE, MONITOR_UID, WECHAT_WEBHOOK]):
         logger.error("缺少必要环境变量: RAW_COOKIE, MONITOR_UID, WECHAT_WEBHOOK")
@@ -322,6 +321,6 @@ if __name__ == "__main__":
 
     monitor = XueqiuMonitor(RAW_COOKIE, MONITOR_UID, WECHAT_WEBHOOK)
 
-    # 单次执行：获取数据、检测变动、推送
-    monitor.run_once(silent_first=SILENT_FIRST_RUN)
+    # 单次执行，状态由 monitor_state.json 自动管理
+    monitor.run_once()
     logger.info("单次检查完成")
