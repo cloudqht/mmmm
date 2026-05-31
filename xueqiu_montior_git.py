@@ -96,7 +96,7 @@ class XueqiuMonitor:
 
     def _get_json(self, url: str, params: dict = None) -> dict:
         """统一 GET，带重试"""
-        for attempt in range(3):
+        for attempt in range(2):
             try:
                 resp = self.session.get(url, params=params, timeout=15)
                 # logger.info(resp._content)
