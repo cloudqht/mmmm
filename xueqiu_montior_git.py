@@ -36,6 +36,32 @@ logger = logging.getLogger(__name__)
 
 
 class XueqiuMonitor:
+    STATE_FILE = "monitor_state.json"
+
+    def save_state(self):
+        state = {
+            "last_stocks": list(self.last_stocks),
+            "last_post_ids": list(self.last_post_ids),
+            "username": self.username,
+            "stock_name_cache": self._stock_name_cache,
+        }
+        with open(self.STATE_FILE, "w") as f:
+            json.dump(state, f)
+        logger.debug("状态已保存")
+
+    def load_state(self):
+        if os.path.exists(self.STATE_FILE):
+            with open(self.STATE_FILE, "r") as f:
+                state = json.load(f)
+            self.last_stocks = set(state.get("last_stocks", []))
+            self.last_post_ids = set(state.get("last_post_ids", []))
+            self.username = state.get("username")
+            self._stock_name_cache = state.get("stock_name_cache", {})
+            logger.info("已加载上次状态")
+        else:
+            self.last_stocks = set()
+            self.last_post_ids = set()
+            self._stock_name_cache = {}
     """雪球用户行为监控器（自选股 + 帖子增删）"""
 
     BASE_HEADERS = {
@@ -258,35 +284,20 @@ class XueqiuMonitor:
             self.send_wechat_msg(full_msg)
 
     # ---------- 主循环 ----------
-    def run_once(self, silent_first: bool = True):
-        """单次检查"""
-        try:
-            stocks = self.fetch_stocks()
-            posts = self.fetch_recent_posts()
+    def run_once(self):
+        self.load_state()
+        stocks = self.fetch_stocks()
+        posts = self.fetch_recent_posts()
+        self._extract_username_from_posts(posts)
+        # 更新股票名称缓存
+        name_map = {s["symbol"]: s.get("name", s["symbol"]) for s in stocks}
+        self._stock_name_cache.update(name_map)
 
-            # 提取用户名
-            self._extract_username_from_posts(posts)
+        added, removed = self.detect_stock_changes(stocks)
+        new_posts, deleted_ids = self.detect_post_changes(posts)
 
-            # 更新股票名称缓存（方便删除时显示名称）
-            name_map = {s["symbol"]: s.get("name", s["symbol"]) for s in stocks}
-            self._stock_name_cache.update(name_map)
-
-            if not stocks and not posts:
-                logger.warning("本次未拉取到数据，请检查 Cookie 是否过期")
-                return
-
-            added, removed = self.detect_stock_changes(stocks)
-            new_posts, deleted_ids = self.detect_post_changes(posts)
-
-            if silent_first and not hasattr(self, '_first_run_done'):
-                self._first_run_done = True
-                logger.info("首次运行，已记录基准，不推送。")
-                return
-
-            self.push_changes(added, removed, new_posts, deleted_ids)
-
-        except Exception as e:
-            logger.error(f"运行异常: {e}", exc_info=True)
+        self.push_changes(added, removed, new_posts, deleted_ids)
+        self.save_state()
 
     def run_forever(self, interval: int = 60):
         """持续监控"""
@@ -298,15 +309,19 @@ class XueqiuMonitor:
 
 
 if __name__ == "__main__":
-    if RAW_COOKIE.startswith("xq_a_token=你的token"):
-        logger.error("请先设置 RAW_COOKIE（从浏览器复制完整 Cookie）")
-        sys.exit(1)
-    if "你的key" in WECHAT_WEBHOOK:
-        logger.error("请先设置 WECHAT_WEBHOOK")
+    import os
+
+    RAW_COOKIE = os.getenv("RAW_COOKIE")
+    MONITOR_UID = os.getenv("MONITOR_UID")
+    WECHAT_WEBHOOK = os.getenv("WECHAT_WEBHOOK")
+    SILENT_FIRST_RUN = os.getenv("SILENT_FIRST_RUN", "false").lower() == "true"
+
+    if not all([RAW_COOKIE, MONITOR_UID, WECHAT_WEBHOOK]):
+        logger.error("缺少必要环境变量: RAW_COOKIE, MONITOR_UID, WECHAT_WEBHOOK")
         sys.exit(1)
 
     monitor = XueqiuMonitor(RAW_COOKIE, MONITOR_UID, WECHAT_WEBHOOK)
-    try:
-        monitor.run_forever(CHECK_INTERVAL)
-    except KeyboardInterrupt:
-        logger.info("监控已停止")
+
+    # 单次执行：获取数据、检测变动、推送
+    monitor.run_once(silent_first=SILENT_FIRST_RUN)
+    logger.info("单次检查完成")
