@@ -99,7 +99,7 @@ class XueqiuMonitor:
         for attempt in range(3):
             try:
                 resp = self.session.get(url, params=params, timeout=15)
-                logger.info(resp.json())
+                logger.info(resp)
                 # logger.info(f"Response status: {resp.status_code}, body preview: {resp.text[:200]}")
                 resp.raise_for_status()
                 return resp.json()
