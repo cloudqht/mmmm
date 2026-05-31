@@ -291,7 +291,7 @@ class XueqiuMonitor:
             full_msg = "\n".join(msg_parts)
             self.send_wechat_msg(full_msg)
 
-        target_name = "准备卖"
+        target_name = "只看沪深"
         if added_stocks or removed_stocks:
             target_stocks = self.portfolio_details.get(target_name, [])
             if target_stocks:
