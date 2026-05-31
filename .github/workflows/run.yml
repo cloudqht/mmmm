@@ -1,0 +1,42 @@
+name: Xueqiu Monitor
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 允许推送更改
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main    # 或者你的分支
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - run: pip install -r requirements.txt
+
+      - name: Run monitor
+        env:
+          RAW_COOKIE: ${{ secrets.RAW_COOKIE }}
+          MONITOR_UID: ${{ secrets.MONITOR_UID }}
+          WECHAT_WEBHOOK: ${{ secrets.WECHAT_WEBHOOK }}
+        run: python xueqiu_montior_git.py
+
+      - name: Commit state file
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add monitor_state.json
+          git diff --staged --quiet || git commit -m "Update monitor state"
+          git push
