@@ -74,7 +74,7 @@ class XueqiuMonitor:
         self.uid = uid
         self.webhook = webhook
         self.username = None  # 延迟从帖子获取
-
+        self.portfolio_details = {}
         # 建立 session 并设置完整 Cookie
         self.session = requests.Session()
         self.session.headers.update(self.BASE_HEADERS)
@@ -140,11 +140,12 @@ class XueqiuMonitor:
 
         all_stocks = []
         seen_codes = set()
-
+        self.portfolio_details = {}
         for p in stock_portfolios:
             pid = p["portfolio"]["id"]
             name = p["name"]
             page = 1
+            portfolio_stocks = []
             while True:
                 url = "https://stock.xueqiu.com/v5/stock/portfolio/stock/list.json"
                 params = {
@@ -161,13 +162,14 @@ class XueqiuMonitor:
                     break
                 logger.info(f"组合[{name}] 第{page}页返回 {len(stocks)} 只股票")
                 for s in stocks:
+                    portfolio_stocks.append(s)
                     symbol = s.get("symbol")
                     if symbol and symbol not in seen_codes:
                         seen_codes.add(symbol)
                         all_stocks.append(s)
                 page += 1
                 time.sleep(0.5)  # 短暂休眠，避免触发频率限制
-
+            self.portfolio_details[name] = portfolio_stocks
         logger.info(f"汇总后总自选股: {len(all_stocks)}")
         return all_stocks
 
@@ -288,6 +290,37 @@ class XueqiuMonitor:
         if len(msg_parts) > 1:
             full_msg = "\n".join(msg_parts)
             self.send_wechat_msg(full_msg)
+
+        target_name = "准备卖"
+        if added_stocks or removed_stocks:
+            target_stocks = self.portfolio_details.get(target_name, [])
+            if target_stocks:
+                stock_str = ", ".join(
+                    f"{s['name']}({s['symbol']})" for s in target_stocks
+                )
+                header = f"📋 **{user_display} 的「{target_name}」持仓**\n"
+                full_msg = header + stock_str
+                self._send_markdown(full_msg)  # 自动处理超长拆分
+        else:
+            logger.info(f"未找到分组「{target_name}」，可能未创建或被重命名")
+
+    def _send_markdown(self, content: str):
+        """发送 Markdown 消息，超过 4096 字节自动拆分"""
+        max_len = 4096
+        if len(content.encode("utf-8")) <= max_len:
+            self.send_wechat_msg(content)
+            return
+        # 按行拆分
+        lines = content.split("\n")
+        chunk = lines[0] + "\n"
+        for line in lines[1:]:
+            if len((chunk + line + "\n").encode("utf-8")) > max_len:
+                self.send_wechat_msg(chunk)
+                chunk = line + "\n"
+            else:
+                chunk += line + "\n"
+        if chunk:
+            self.send_wechat_msg(chunk)
 
     # ---------- 主循环 ----------
     def run_once(self):
