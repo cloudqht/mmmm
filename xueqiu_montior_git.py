@@ -15,7 +15,8 @@ RAW_COOKIE = "smidV2=20250518172827a643dd2c05697cccdd1e2bd90195806400936a86a229c
 XQ_TOKEN = "967c71fd28250b546f72458b62e6c4a94076a1b7"
 
 # 监控的用户 UID（数字，可以是自己的或他人的）
-MONITOR_UID = "2292705444"
+# MONITOR_UID = "2292705444"
+MONITOR_UID = "4968062224"
 
 # 企业微信机器人 Webhook
 WECHAT_WEBHOOK = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d9dbb5f6-d692-4d07-8ea2-54a8ea5059fd"
@@ -98,6 +99,9 @@ class XueqiuMonitor:
         for attempt in range(3):
             try:
                 resp = self.session.get(url, params=params, timeout=15)
+                logger.debug(f"Response status: {resp.status_code}, body preview: {resp.text[:200]}")
+                resp.raise_for_status()
+                return resp.json()
                 if resp.status_code == 200:
                     return resp.json()
                 else:
