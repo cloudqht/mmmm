@@ -240,7 +240,7 @@ class XueqiuMonitor:
         """发送 Markdown 到企业微信"""
         payload = {
             "msgtype": "text",
-            "markdown": {"content": content}
+            "text": {"content": content}
         }
         try:
             resp = requests.post(self.webhook, json=payload, timeout=10)
