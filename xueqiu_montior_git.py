@@ -239,7 +239,7 @@ class XueqiuMonitor:
     def send_wechat_msg(self, content: str):
         """发送 Markdown 到企业微信"""
         payload = {
-            "msgtype": "markdown",
+            "msgtype": "text",
             "markdown": {"content": content}
         }
         try:
