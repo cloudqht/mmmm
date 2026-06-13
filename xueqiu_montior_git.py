@@ -10,8 +10,7 @@ from typing import Set, Dict, Any, List, Tuple
 
 # ==================== 配置区域 ====================
 # 从浏览器复制的完整 Cookie 字符串（必须，包含 xq_a_token, u, s 等）
-RAW_COOKIE = "smidV2=20250518172827a643dd2c05697cccdd1e2bd90195806400936a86a229c2fd0; cookiesu=601773833007334; device_id=e1bc45f84289fa5691682bd6ed65ce53; s=bh13ab6fjk; xq_is_login=1; u=4968062224; bid=115c43fabd8716312556b3b239267df3_molof2jz; xq_a_token=967c71fd28250b546f72458b62e6c4a94076a1b7; xqat=967c71fd28250b546f72458b62e6c4a94076a1b7; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjQ5NjgwNjIyMjQsImlzcyI6InVjIiwiZXhwIjoxNzgyNjQ0ODgyLCJjdG0iOjE3ODAwNTI4ODI4MzUsImNpZCI6ImQ5ZDBuNEFadXAifQ.j16i7crx42s5RB4vzUxG3osbyWj4coCzfLDKxFUdggfn5Y8hDmNMpoiipzKyBNLu8TofQr5ciLB3vO4sQQjtWzfKTl9CjZDlrlKNACP1AEzvxRqLxJZHUl17UihDjL1AtoahX_ieMm2lGqResrMuozbFnU4uaQx3ptl8J09bUXqIOBqdnTdvIqQXAScgU8hDnxm2j97K9pjJKhUiIxqqoLlsobUt160QE5y-WLF3eD2my_QBrHeyYrVpaV9i-uw5IHRh8T8APWSqgl9N3Mg-Ehha_OedZE9G6ThmIR7EvldJUI58851LCrKW2m00z3IAeEgHMATwbHJXrt2QPOMvDg; xq_r_token=2c36f683a56ccddb29b2fff9222163f5215e08f8; aliyungf_tc=ad04dd408c06b39e675fd544f9a8f3861664cb2cba94dc9da30f9020a822ba08; .thumbcache_f24b8bbe5a5934237bbc0eda20c1b6e7=Bzgaz7hS9Wv7LdZoigYVu5s5AhZBFocgyNcPigC5xej94ug9Lf+DynpHiAR8+qXFyXfDwfRcmSpjGQ2k68twZw%3D%3D"
-
+RAW_COOKIE = "smidV2=20250518172827a643dd2c05697cccdd1e2bd90195806400936a86a229c2fd0; cookiesu=601773833007334; device_id=e1bc45f84289fa5691682bd6ed65ce53; s=bh13ab6fjk; xq_is_login=1; u=4968062224; bid=115c43fabd8716312556b3b239267df3_molof2jz; xq_a_token=7bd5e9c0d56ed419dc8f1f9238ccf058e2b073fb; xqat=7bd5e9c0d56ed419dc8f1f9238ccf058e2b073fb; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjQ5NjgwNjIyMjQsImlzcyI6InVjIiwiZXhwIjoxNzgzOTUwNzgyLCJjdG0iOjE3ODEzNTg3ODIwNDIsImNpZCI6ImQ5ZDBuNEFadXAifQ.Zsmz_gdoJCN4543nkeb_2YZX0DBqnSTz_bv-ST-2vs-gam-Dp0N9Dj9npoShtl1Yn2VinD3qSAIpXZ6fc2zbtVJnLy5NStKyILvkpt10vSErBo9ZKyvzZwZ4Z88mWzOi10wswThMXwqW1WzZeCBqCaXFFVqdoxL39Ogn974RUOgXR5WFtLvbl0itsk7vmCz7WPuJaga9NIIxZ4nTyjm7w4ByXmNmvehCGzkINm3sDMvWxQl3mGKqznBAm2aeR9cJZLmABIJ5-mxGIrICOxhoqXQj1HlXeunuDsoUztDl97SDYsLtoCJAW6jsuHJZDbIFPsev4fMjFi6qP9Xt8L1Utg; xq_r_token=3e96f798d06c35055852dde2f7bfa94282512025; acw_tc=276082bd17813609378814786e479bd8fd0e37e44e8c43b6cfe552e8855dc2; is_overseas=0; .thumbcache_f24b8bbe5a5934237bbc0eda20c1b6e7=Abz2ktsG3eUgDi8uJJS5KX62Fao5O1kcxaN2I7bqh3zrX7hNLU+Nmuh880PPr0qiwzjdUAPPzo0RLHXjhVwqTw%3D%3D; ssxmod_itna=1-eqRxciqQw4yAD8DhaDprkbGObG=1DXDUL4iQGgDYq7=GFDmx0PpBxDCbx58jHSKQDeb5kGzri5D/D44GzDiLPGhDBeAFijxDK118A=70pX8mi5hH8Hf1MbnfTiYE8cPbXU6ZS8hisUtiDB3DbqDyWBP1beGGA4GwDGoD34DiDDPfD03Db4D_9CrD7hb=ZeW31j4DQ4GyDitDKL43xi3DA4DjAjXXUWdD0Tdhc_QkSDGWAjux1647xGtPSCGxAeDMtxGXQYk6AeDBnIk6K6TEE/BmCmaFxBQD7k9=de97UjnNHl7iiQoexhdXAYK7o3BKeAN3Aqi0Y=BPz2Dj2DKi53ex8x=YDGD_dCxDiOmx7eDxhxe_cgUBrEgaNiWmHi0Y7qVpmtYviBG54K_WKD6wzAiGCqklPiGD4ji58GePim7mHBXX7DYiD6B0KjewRriGmFYRt3D; ssxmod_itna2=1-eqRxciqQw4yAD8DhaDprkbGObG=1DXDUL4iQGgDYq7=GFDmx0PpBxDCbx58jHSKQDeb5kGzrDeDADcDbq1K/D7P4=m9jxD/QDDKEq3lP79H3mtm3yjIxdc29XXbTFfCGeR98GWX3zOdXZlfLDgw3Y3jN6nuiqWY2LzodXGrftijbX8iRFGitZmuXlj2QZ9d_DXW37Y06xRMPY86PqG0=tsojFSAXHcq4kMQW6Dfwak070fbv7ai5XKBRFVufx8tL9_F9Sj2fKzR8UzgP1DhdudsvzWBvGjEMuwN1uPD"
 XQ_TOKEN = "967c71fd28250b546f72458b62e6c4a94076a1b7"
 
 # 监控的用户 UID（数字，可以是自己的或他人的）
@@ -257,7 +256,7 @@ class XueqiuMonitor:
             return
 
         user_display = self.username if self.username else self.uid
-        msg_parts = [f"**雪球用户 {user_display} 动态提醒**\n"]
+        msg_parts = [f"雪球用户 {user_display} 动态提醒\n"]
 
         # 自选股变动
         if added_stocks:
@@ -265,14 +264,14 @@ class XueqiuMonitor:
                 f"[{s['name']}({s['symbol']})](https://xueqiu.com/S/{s['symbol']})"
                 for s in added_stocks
             )
-            msg_parts.append(f"📈 **新增自选**：{names}")
+            msg_parts.append(f"📈 新增自选：{names}")
 
         if removed_stocks:
             names = ", ".join(
                 f"[{s['name']}({s['symbol']})](https://xueqiu.com/S/{s['symbol']})"
                 for s in removed_stocks
             )
-            msg_parts.append(f"📉 **删除自选**：{names}")
+            msg_parts.append(f"📉 删除自选：{names}")
 
         # 帖子变动
         if new_posts:
@@ -280,12 +279,12 @@ class XueqiuMonitor:
                 post_id = post["id"]
                 text_preview = post.get("text", "").replace("\n", " ")[:50]
                 post_url = f"https://xueqiu.com/{self.uid}/{post_id}"
-                msg_parts.append(f"💬 **新发帖**：[{text_preview}...]({post_url})")
+                msg_parts.append(f"💬 新发帖：[{text_preview}...]({post_url})")
 
         if deleted_post_ids:
             # 删除时只有 ID，无法获取标题，可列出 ID 和时间（可选）
             deleted_list = ", ".join(str(pid) for pid in deleted_post_ids)
-            msg_parts.append(f"🗑️ **删帖**：帖子ID {deleted_list}")
+            msg_parts.append(f"🗑️ 删帖：帖子ID {deleted_list}")
 
         if len(msg_parts) > 1:
             full_msg = "\n".join(msg_parts)
@@ -298,7 +297,7 @@ class XueqiuMonitor:
                 stock_str = ", ".join(
                     f"{s['name']}({s['symbol']})" for s in target_stocks
                 )
-                header = f"📋 **{user_display} 的「{target_name}」持仓**\n"
+                header = f"📋 {user_display} 的「{target_name}」持仓\n"
                 full_msg = header + stock_str
                 self._send_markdown(full_msg)  # 自动处理超长拆分
         else:
