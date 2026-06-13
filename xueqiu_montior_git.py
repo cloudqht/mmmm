@@ -239,8 +239,8 @@ class XueqiuMonitor:
     def send_wechat_msg(self, content: str):
         """发送 Markdown 到企业微信"""
         payload = {
-            "msgtype": "markdown",
-            "markdown": {"content": content}
+            "msgtype": "text",
+            "text": {"content": content}
         }
         try:
             resp = requests.post(self.webhook, json=payload, timeout=10)
